@@ -1,4 +1,4 @@
-KWS inference on on chip
+KWS inference on chip
 =
 
 This document is a simple outline for our RISC-V based KWS accelerator. <br>
