@@ -48,7 +48,11 @@ The major components include <br>
     6.**Batch normalize module** to be tested) <br>
     7.**Sigmoid Activation module** (to be tested) <br>
 
-Our weights are store in 2 4kb SRAMs from Efabless marketplace
+### Results for the hardware modules
+The hardened modules, CMVN(normalising pool), ReLU, Linear, are all successfully tested before hardening. The Linear module was rewrite last minute with a register file because I couldn’t figure out how to correctly incorporate the Efabless SRAM 😅.
+Rest of the modules will have their Verilog code provided, on the roadmap I would like to finish in later times. 
+I have attached my attempt and code with each attempt. 
+
 
 ### Model
 
@@ -72,7 +76,7 @@ Dilated Convolutional Neural Networks (CNNs) are chosen for their ability to han
 Train the deep learning model using the prepared dataset. This involves data preprocessing, model selection, and optimization to ensure high accuracy in keyword detection.
 
 Implementation in Python with pure tensor:
-Implement the trained model in a Python environment, ensuring it is free from external library dependencies. This makes integration with hardware more straightforward.
+Implement the trained model in a Python environment, ensuring it is **free** from external library dependencies. This makes integration with hardware more straightforward.
 
 ### Weight Extraction:
 Extract the model weights after the Python implementation. These weights are crucial for deploying the model on hardware.
@@ -81,6 +85,7 @@ Extract the model weights after the Python implementation. These weights are cru
 Translate the Python implementation and extracted weights into Verilog for hardware implementation. This step involves designing the hardware description language suitable for chip design.
 
 By implementing KWS inference on a chip, we aim to create a low-latency, efficient system capable of recognizing voice commands in real-time. This project leverages the latest advancements in deep learning and practical hardware implementation techniques to develop responsive and intelligent voice-controlled devices.
+
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
