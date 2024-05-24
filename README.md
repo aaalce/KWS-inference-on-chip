@@ -49,7 +49,7 @@ The major components include <br>
 
 ### Results for the hardware modules
 The hardened modules, CMVN(normalising pool), ReLU, Linear, are all successfully tested before hardening. The Linear module was rewrite last minute with a register file because I couldn’t figure out how to correctly incorporate the Efabless SRAM 😅.
-Rest of the modules will have their Verilog code provided, on the roadmap I would like to finish in later times. 
+Rest of the calculation modules will have their Verilog code provided, on the roadmap I would like to finish in later times. 
 I have attached my attempt and code with each attempt. 
 
 
@@ -140,13 +140,11 @@ Throughout the journey, I have a few findings about LLM.
 
 1 LLM might be perfect for debugging and spotting details we miss, it lacks of logic when a real concept needs to be applied. One of the things I spent the most time doing was to explain to Claude what Matrix Multiplication is, and how shall it be done in a data stream like ours. In the beginning I wasn’t aware it doesn’t truly ‘understand’, because it can explain matrix multiplication in perfect sentences. After realising its shortcomings, I have spent substantial amount of time, giving examples to it how the calculation and data selection logic should work, Claude seemed to understand after some examples, and gave back the correct answers if I ask in hypothetical terms, but it would be unable to produce the correct Verilog logic, unable to match everything on the correct cycle, unless I explicitly stated. Nor spot the apparent mistakes such as the wrong dimensions of the output matrix.
 
-2 It taught me through repetitively asking and spotting mistakes, at a very fast pace(fast response), by efficiently reducing search time. At the beginning I was completely lost, at the end of the challenge I was able to read Verilog, do some debugging on my own, and have a hunch what went wrong. It also training me to talk to (and ignore) LLM more efficient and effectively.
+2 LLM is pretty bad as maths. Basic arithmetic. I wouldn’t trust their answers if the numbers get big or equations gets long. 
 
-3 LLM is pretty bad as maths. Basic arithmetic. I wouldn’t trust their answers if the numbers get big or equations gets long. 
+3 They get stuck in loops sometimes, so you need to either feed it some radically new information or open a new chat. 
 
-4 They get stuck in loops sometimes, so you need to either feed it some radically new information or open a new chat. 
-
-5 They will give you relatively similar answers, or designs in this case, for a KWS accelerator, across several LLM. Unless you start to read papers or get information elsewhere, they won’t give you anything ‘new’. Therefore I’m skeptical about its ability to create- or let’s say, innovate. 
+4 They will give you relatively similar answers, or designs in this case, for a KWS accelerator, across several LLM. Unless you start to read papers or get information elsewhere, they won’t give you anything ‘new’. Therefore I’m skeptical about its ability to create- or let’s say, innovate. 
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
