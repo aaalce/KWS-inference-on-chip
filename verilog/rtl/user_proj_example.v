@@ -1,46 +1,11 @@
-// SPDX-FileCopyrightText: 2020 Efabless Corporation
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-// SPDX-License-Identifier: Apache-2.0
-
 `default_nettype none
-/*
- *-------------------------------------------------------------
- *
- * user_proj_example
- *
- * This is an example of a (trivially simple) user project,
- * showing how the user project can connect to the logic
- * analyzer, the wishbone bus, and the I/O pads.
- *
- * This project generates an integer count, which is output
- * on the user area GPIO pads (digital output only).  The
- * wishbone connection allows the project to be controlled
- * (start and stop) from the management SoC program.
- *
- * See the testbenches in directory "mprj_counter" for the
- * example programs that drive this user project.  The three
- * testbenches are "io_ports", "la_test1", and "la_test2".
- *
- *-------------------------------------------------------------
- */
 
 module user_proj_example #(
-    parameter BITS = 16
+    parameter BITS = 32
 )(
 `ifdef USE_POWER_PINS
-    inout vccd1,	// User area 1 1.8V supply
-    inout vssd1,	// User area 1 digital ground
+    inout vccd1,    // User area 1 1.8V supply
+    inout vssd1,    // User area 1 digital ground
 `endif
 
     // Wishbone Slave ports (WB MI A)
@@ -52,105 +17,173 @@ module user_proj_example #(
     input [3:0] wbs_sel_i,
     input [31:0] wbs_dat_i,
     input [31:0] wbs_adr_i,
-    output wbs_ack_o,
-    output [31:0] wbs_dat_o,
+    output reg wbs_ack_o,
+    output reg [31:0] wbs_dat_o,
 
     // Logic Analyzer Signals
     input  [127:0] la_data_in,
-    output [127:0] la_data_out,
+    output reg [127:0] la_data_out,
     input  [127:0] la_oenb,
 
     // IOs
     input  [BITS-1:0] io_in,
-    output [BITS-1:0] io_out,
-    output [BITS-1:0] io_oeb,
+    output reg [BITS-1:0] io_out,
+    output reg [BITS-1:0] io_oeb,
 
     // IRQ
-    output [2:0] irq
+    output reg [2:0] irq
 );
+
     wire clk;
     wire rst;
 
-    wire [BITS-1:0] rdata; 
-    wire [BITS-1:0] wdata;
-    wire [BITS-1:0] count;
+    // KWS FSM signals
+    reg start;
+    reg [3:0] opcode;
+    wire cmvn_en;
+    wire linear_en;
+    wire relu_en;
+    wire padding_en;
+    wire cnn_en;
+    wire batch_norm_en;
+    wire sigmoid_en;
+    wire systolic_en;
+    wire [1:0] systolic_op;
+    wire done;
 
-    wire valid;
-    wire [3:0] wstrb;
-    wire [BITS-1:0] la_write;
+    // CMVN signals
+    wire [31:0] cmvn_input_data;
+    wire [4:0] cmvn_input_addr;
+    wire [31:0] cmvn_output_data;
+    wire [4:0] cmvn_output_addr;
+    wire cmvn_output_valid;
 
-    // WB MI A
-    assign valid = wbs_cyc_i && wbs_stb_i; 
-    assign wstrb = wbs_sel_i & {4{wbs_we_i}};
-    assign wbs_dat_o = {{(32-BITS){1'b0}}, rdata};
-    assign wdata = wbs_dat_i[BITS-1:0];
+    // Linear signals
+    wire [31:0] linear_input_data;
+    wire [9:0] linear_input_addr;
+    wire [31:0] linear_output_data;
+    wire [9:0] linear_output_addr;
+    wire linear_output_valid;
+    wire linear_input_req;
 
-    // IO
-    assign io_out = count;
-    assign io_oeb = {(BITS){rst}};
+    // Weights signals
+    wire [31:0] weights_data_out;
 
-    // IRQ
-    assign irq = 3'b000;	// Unused
+    // ReLU signals
+    wire [31:0] relu_input_data;
+    wire [4:0] relu_input_addr;
+    wire [31:0] relu_output_data;
+    wire [4:0] relu_output_addr;
+    wire relu_output_valid;
 
-    // LA
-    assign la_data_out = {{(128-BITS){1'b0}}, count};
-    // Assuming LA probes [63:32] are for controlling the count register  
-    assign la_write = ~la_oenb[63:64-BITS] & ~{BITS{valid}};
-    // Assuming LA probes [65:64] are for controlling the count clk & reset  
-    assign clk = (~la_oenb[64]) ? la_data_in[64]: wb_clk_i;
-    assign rst = (~la_oenb[65]) ? la_data_in[65]: wb_rst_i;
-
-    counter #(
-        .BITS(BITS)
-    ) counter(
+    // Instantiate the KWS FSM module
+    kws_fsm kws_fsm_inst (
         .clk(clk),
-        .reset(rst),
-        .ready(wbs_ack_o),
-        .valid(valid),
-        .rdata(rdata),
-        .wdata(wbs_dat_i[BITS-1:0]),
-        .wstrb(wstrb),
-        .la_write(la_write),
-        .la_input(la_data_in[63:64-BITS]),
-        .count(count)
+        .rst_n(rst),
+        .start(start),
+        .opcode(opcode),
+        .cmvn_en(cmvn_en),
+        .linear_en(linear_en),
+        .relu_en(relu_en),
+        .padding_en(padding_en),
+        .cnn_en(cnn_en),
+        .batch_norm_en(batch_norm_en),
+        .sigmoid_en(sigmoid_en),
+        .systolic_en(systolic_en),
+        .systolic_op(systolic_op),
+        .done(done)
     );
 
-endmodule
+    // Instantiate the CMVN module
+    cmvn cmvn_inst (
+        .clk(clk),
+        .rst_n(rst),
+        .cmvn_en(cmvn_en),
+        .input_data(cmvn_input_data),
+        .input_addr(cmvn_input_addr),
+        .output_data(cmvn_output_data),
+        .output_addr(cmvn_output_addr),
+        .output_valid(cmvn_output_valid)
+    );
 
-module counter #(
-    parameter BITS = 16
-)(
-    input clk,
-    input reset,
-    input valid,
-    input [3:0] wstrb,
-    input [BITS-1:0] wdata,
-    input [BITS-1:0] la_write,
-    input [BITS-1:0] la_input,
-    output reg ready,
-    output reg [BITS-1:0] rdata,
-    output reg [BITS-1:0] count
-);
+    // Instantiate the Weights Register File module
+    weights_reg_file weights_inst (
+        .clk(clk),
+        .rst_n(rst),
+        .row_addr(linear_input_addr[9:5]),
+        .col_addr(linear_input_addr[4:0]),
+        .data_out(weights_data_out)
+    );
 
-    always @(posedge clk) begin
-        if (reset) begin
-            count <= 1'b0;
-            ready <= 1'b0;
+    // Instantiate the Linear module
+    linear linear_inst (
+        .clk(clk),
+        .rst_n(rst),
+        .linear_en(linear_en),
+        .input_data(linear_input_data),
+        .input_addr(linear_input_addr),
+        .output_data(linear_output_data),
+        .output_addr(linear_output_addr),
+        .output_valid(linear_output_valid),
+        .input_req(linear_input_req)
+    );
+
+    // Instantiate the ReLU module
+    relu relu_inst (
+        .clk(clk),
+        .rst_n(rst),
+        .relu_en(relu_en),
+        .input_data(relu_input_data),
+        .input_addr(relu_input_addr),
+        .output_data(relu_output_data),
+        .output_addr(relu_output_addr),
+        .output_valid(relu_output_valid)
+    );
+
+    // Clock and reset assignments
+    assign clk = wb_clk_i;
+    assign rst = wb_rst_i;
+
+    // Input/output assignments
+    assign cmvn_input_data = io_in[31:0];
+    assign cmvn_input_addr = io_in[36:32];
+    assign linear_input_data = cmvn_output_valid ? cmvn_output_data : relu_output_data;
+    assign linear_input_addr = cmvn_output_valid ? {5'b0, cmvn_output_addr} : {5'b0, relu_output_addr};
+    assign relu_input_data = linear_output_valid ? linear_output_data : 32'b0;
+    assign relu_input_addr = linear_output_valid ? linear_output_addr[4:0] : 5'b0;
+
+    // Output assignments
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            io_out <= {BITS{1'b0}};
+            io_oeb <= {BITS{1'b1}}; // Set io_oeb to high-impedance state
+            wbs_ack_o <= 1'b0;
+            wbs_dat_o <= 32'b0;
+            la_data_out <= 128'b0;
+            irq <= 3'b0;
         end else begin
-            ready <= 1'b0;
-            if (~|la_write) begin
-                count <= count + 1'b1;
-            end
-            if (valid && !ready) begin
-                ready <= 1'b1;
-                rdata <= count;
-                if (wstrb[0]) count[7:0]   <= wdata[7:0];
-                if (wstrb[1]) count[15:8]  <= wdata[15:8];
-            end else if (|la_write) begin
-                count <= la_write & la_input;
-            end
+            io_out <= {done, {(BITS-1){1'b0}}}; // Assign 'done' to LSB, others to 0
+            io_oeb <= {(BITS){1'b0}}; // Enable all output bits
+            wbs_ack_o <= wbs_cyc_i & wbs_stb_i; // Generate Wishbone acknowledgment
+            wbs_dat_o <= 32'b0; // Assign a default value or provide the appropriate data
+            la_data_out <= 128'b0; // Assign a default value or provide the appropriate data
+            irq <= 3'b0; // Assign appropriate interrupt request values if needed
+        end
+    end
+
+    // Control signals
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            start <= 1'b0;
+            opcode <= 4'b0;
+        end else begin
+            // Implement the logic to control the start signal and opcode based on your requirements
+            // For example, you can trigger the start signal and set the opcode when certain conditions are met
+            // start <= some_condition ? 1'b1 : 1'b0;
+            // opcode <= some_condition ? 4'bXXXX : 4'b0;
         end
     end
 
 endmodule
+
 `default_nettype wire

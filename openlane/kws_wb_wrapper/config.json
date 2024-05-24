@@ -1,0 +1,17 @@
+{
+    "DESIGN_NAME": "kws_wb_wrapper",
+    "FP_PDN_MULTILAYER": false,
+    "CLOCK_PORT": "wb_clk_i",
+    "CLOCK_PERIOD": 25,
+    "VERILOG_FILES": [
+        "dir::../../../KWS-inference-on-chip/verilog/rtl/batch_normalize.v",
+        "dir::../../../KWS-inference-on-chip/verilog/rtl/cmvn.v",
+        "dir::../../../KWS-inference-on-chip/verilog/rtl/DilatedCNN.v",
+        "dir::../../../KWS-inference-on-chip/verilog/rtl/linear.v",
+        "dir::../../../KWS-inference-on-chip/verilog/rtl/relu.v",
+        "dir::../../../KWS-inference-on-chip/verilog/rtl/sigmoid.v",
+        "dir::../../../KWS-inference-on-chip/verilog/rtl/kws_wb_wrapper.v",
+        "dir::../../../KWS-inference-on-chip/verilog/rtl/kws_fsm.v"
+    ],
+    "FP_CORE_UTIL": 40
+}
