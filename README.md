@@ -83,13 +83,16 @@ Implement the trained model in a Python environment, ensuring it is **free** fro
 Extract the model weights after the Python implementation. These weights are crucial for deploying the model on hardware.
 
 ### Chats with 🤖:
-We started with general questions about KWS. The prompt diverged to software and hardware design.
-On the hardware part, roughly obtain the modules first, then start with designing the ISA and Finite State Machine.
-For each module, there were multiple attempts to generate the file, the first prompt and answer determines a big part of the quality of the code. The best way to generate a high quality code is to give it consice directions in the first place, with ISA, architecute and the python code all together. Another finding is, to give back the LLM it's generated code, or the code we implemented after chats, can be used to produce a better prompt, which can be used for the new chat.
-The most challenging part of this excersice was to generate a Linear module that performs linear transformation, in our case, a matrix multiplication of \[50x20\] x \[20x20\].
+We started with general questions about KWS. The prompt diverged to software and hardware design. 
+AI in this case, not only act as a co-designer, but also a teacher who explains the fundamentals of IC design for me.
+First, a rough plan of modules was determined, then progress to designing the ISA and Finite State Machine.
+For each module, there were multiple attempts to generate the file, the first prompt and answer determines a big part of the quality of the code. The best way to generate a high quality code is to give it consice directions in the first place, with ISA, architecute and the python code all together. Another finding is, to give back the LLM it's generated code, or the code we implemented after chats, can be used to produce a better prompt, which can be used for the new chat. 
+Each iteration(try) of fresh new version was labeled (both chat and verilog file), can be viewed in comparison.
+We use the LLM Claude to successfully create CMVN, ReLU, Linear module, with Verilog code and a python testbench in Cocotb. The dilated CNN and Sigmoid modules wasn't succesfully tested with it's calculation logic. They were not hardened. 
+The most challenging part of this excersice was to generate a Linear module that performs linear transformation, in our case, a matrix multiplication of \[50x20\] x \[20x20\].This is the part where I found out LLMs don't really 'understand'(details at the bottom of the file).
 
 ### Implementation in Verilog:
-Translate the Python implementation and extracted weights into Verilog for hardware implementation. This step involves designing the hardware description language suitable for chip design.
+Translate the Python implementation and extracted weights into Verilog for hardware implementation. This step involves designing the hardware description language suitable for chip design. I ran into some unexpected diffulties too, such as error from Efabless SRAM or rookie mistakes like adapoting a Full-Wrapper Flattening strategy but ran out of RAM on my own computer.
 
 By implementing KWS inference on a chip, we aim to create a low-latency, efficient system capable of recognizing voice commands in real-time. This project leverages the latest advancements in deep learning and practical hardware implementation techniques to develop responsive and intelligent voice-controlled devices.
 
