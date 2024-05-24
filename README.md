@@ -19,7 +19,7 @@ General KWS Pipeline: The pipeline includes stages from the initial speech signa
 
 Our Scope: We focus on the stages of the keyword spotting acoustic model right after feature extraction, ending just before posterior handling.
 
-![alt text](http://url/to/img.png)
+![Our scope](https://github.com/aaalce/KWS-inference-on-chip/blob/main/Our%20Scope.png)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -55,7 +55,14 @@ I have attached my attempt and code with each attempt.
 
 
 ### Model
+![Our scope](https://github.com/aaalce/KWS-inference-on-chip/blob/main/Dilated%20CNN.png)
+<Our scope src="https://github.com/aaalce/KWS-inference-on-chip/blob/main/Dilated%20CNN.png" width="48">
 
+### Prompt Introduction
+We started with general questions about KWS. The prompt diverged to software and hardware design.
+On the hardware part, roughly obtain the modules first, then start with designing the ISA and Finite State Machine.
+For each module, there were multiple attempts to generate the file, the first prompt and answer determines a big part of the quality of the code. The best way to generate a high quality code is to give it consice directions in the first place, with ISA, architecute and the python code all together. Another finding is, to give back the LLM it's generated code, or the code we implemented after chats, can be used to produce a better prompt, which can be used for the new chat.
+The most challenging part of this excersice was to generate a Linear module that performs linear transformation, in our case, a matrix multiplication of \[50x20\] x \[20x20\].
 
 ### Data
 We use the "Hey Snips" dataset, which includes various voice commands from different speakers, providing a robust dataset for training. This dataset contains thousands of audio samples of different keywords, recorded by multiple speakers, including background noise and variations in speech patterns.
