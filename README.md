@@ -31,7 +31,6 @@ Our Scope: We focus on the stages of the keyword spotting acoustic model right a
 
 ### Overview
 
-
 This is a simple outline for our RISC-V based KWS accelerator. 
 
 Fixed-point arithmetic is adopted to simplify the hardwar design. To preserve the the fractional part of the data, we converted our weights and inputs to 32 bits fixed-point 1.7.24 format.That is 1 Sign bit, 7 bits for the integer part, 24 bits for the fractional part.
@@ -54,15 +53,9 @@ Rest of the modules will have their Verilog code provided, on the roadmap I woul
 I have attached my attempt and code with each attempt. 
 
 
-### Model
+## KWS Model with Dilated CNN
 ![Our scope](https://github.com/aaalce/KWS-inference-on-chip/blob/main/Dilated%20CNN.png)
 <Our scope src="https://github.com/aaalce/KWS-inference-on-chip/blob/main/Dilated%20CNN.png" width="48">
-
-### Prompt Introduction
-We started with general questions about KWS. The prompt diverged to software and hardware design.
-On the hardware part, roughly obtain the modules first, then start with designing the ISA and Finite State Machine.
-For each module, there were multiple attempts to generate the file, the first prompt and answer determines a big part of the quality of the code. The best way to generate a high quality code is to give it consice directions in the first place, with ISA, architecute and the python code all together. Another finding is, to give back the LLM it's generated code, or the code we implemented after chats, can be used to produce a better prompt, which can be used for the new chat.
-The most challenging part of this excersice was to generate a Linear module that performs linear transformation, in our case, a matrix multiplication of \[50x20\] x \[20x20\].
 
 ### Data
 We use the "Hey Snips" dataset, which includes various voice commands from different speakers, providing a robust dataset for training. This dataset contains thousands of audio samples of different keywords, recorded by multiple speakers, including background noise and variations in speech patterns.
@@ -78,6 +71,7 @@ Dilated Convolutional Neural Networks (CNNs) are chosen for their ability to han
 <!-- USAGE EXAMPLES -->
 
 ## Working process: 
+
 ### Model Training:
 
 Train the deep learning model using the prepared dataset. This involves data preprocessing, model selection, and optimization to ensure high accuracy in keyword detection.
@@ -87,6 +81,12 @@ Implement the trained model in a Python environment, ensuring it is **free** fro
 
 ### Weight Extraction:
 Extract the model weights after the Python implementation. These weights are crucial for deploying the model on hardware.
+
+### Chats with 🤖:
+We started with general questions about KWS. The prompt diverged to software and hardware design.
+On the hardware part, roughly obtain the modules first, then start with designing the ISA and Finite State Machine.
+For each module, there were multiple attempts to generate the file, the first prompt and answer determines a big part of the quality of the code. The best way to generate a high quality code is to give it consice directions in the first place, with ISA, architecute and the python code all together. Another finding is, to give back the LLM it's generated code, or the code we implemented after chats, can be used to produce a better prompt, which can be used for the new chat.
+The most challenging part of this excersice was to generate a Linear module that performs linear transformation, in our case, a matrix multiplication of \[50x20\] x \[20x20\].
 
 ### Implementation in Verilog:
 Translate the Python implementation and extracted weights into Verilog for hardware implementation. This step involves designing the hardware description language suitable for chip design.
