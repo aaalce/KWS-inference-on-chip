@@ -2,15 +2,10 @@
 
 <h3 align="center">KWS inference on chip</h3>
 
+ <br>
   <p align="center">
-    This project focuses on implementing Keyword Spotting (KWS) inference on a chip. 
-
-Keyword Spotting Task is a classification Task: KWS aims to classify input signals to detect the presence or absence of specific keywords, such as "Hey Snips," in real-time.
-    <br />
-    <a href="https://github.com/github_username/repo_name"><strong>Explore the docs »</strong></a>
-
-  </p>
-</div>
+    This project focuses on implementing Keyword Spotting (KWS) inference on a chip. Keyword Spotting Task is a classification Task: KWS aims to classify input signals to detect the presence or absence of specific keywords, such as "Hey Snips," in real-time.
+ <br>
 
 
 <!-- ABOUT THE PROJECT -->
@@ -87,10 +82,10 @@ By implementing KWS inference on a chip, we aim to create a low-latency, efficie
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 ## Hardware modules
 
-
-## Overview
+### Overview
 
 This is a simple outline for our RISC-V based KWS accelerator. 
 
@@ -121,7 +116,7 @@ I have attached my attempt and code with each attempt.
 **Batch normalize module** to be tested) <br>
     **Sigmoid Activation module** (to be tested) <br>
 
-See the [open issues](https://github.com/github_username/repo_name/issues) for a full list of proposed features (and known issues).
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -129,9 +124,9 @@ See the [open issues](https://github.com/github_username/repo_name/issues) for a
 
 <!-- CONTRIBUTING -->
 ## Contributing
-Xiaoyu Wen -- https://github.com/aaalce
-Hongzhi Hou --https://github.com/hoho1st
-Jian Sun --https://github.com/jsun1006
+Xiaoyu Wen -- https://github.com/aaalce <br>
+Hongzhi Hou --https://github.com/hoho1st <br>
+Jian Sun --https://github.com/jsun1006 <br>
 Feel free to contact us if you have any questions!
 
 
@@ -144,17 +139,17 @@ Feel free to contact us if you have any questions!
 <!-- CONTACT -->
 ## Some personal thoughts
 
-In 2023 me and my friend(Hongzhi Hou, the other author of the project) was stunned by power of LLM that transformed human learning. We decided to each learn a random skill with LLM from scratch as a fun experiment. In March 2024 I accidentally came across this challenge, picking IC design, as my target. It is something I was alway curious about but felt intimidated due to its complexity. The challenge provided a perfect start with real project and goals, it also accelerated my learning by giving it a time constraint with pressure. The real difficulties from this exercise was to decide, which direction i should go, what shall I focus on when **everything** is unknown. 
+In 2023 me and my friend(Hongzhi Hou, the other author of the project) was stunned by power of LLM that transformed human learning. We decided to each learn a random skill with LLM from scratch as a fun experiment. In March 2024 I came across this challenge on Efabless, hence picking IC design, as my goal. It is something I was alway curious about but felt intimidated due to its complexity. The challenge provided a perfect start with real project and goals, it also accelerated my learning by giving it a time constraint with pressure. The real difficulties from this exercise was to decide, which direction i should go, what shall I focus on when **everything** is unknown. 
 
 Throughout the journey, I have a few findings about LLM.
 
-1 LLM might be perfect for debugging and spotting details we miss, it lacks of logic when a real concept needs to be applied. One of the things I spent the most time doing was to explain to Claude what Matrix Multiplication is, and how shall it be done in a data stream like ours. In the beginning I wasn’t aware it doesn’t truly ‘understand’, because it can explain matrix multiplication in perfect sentences. After realising its shortcomings, I have spent substantial amount of time, giving examples to it how the calculation and data selection logic should work, Claude seemed to understand after some examples, and gave back the correct answers if I ask in hypothetical terms, but it would be unable to produce the correct Verilog logic, unable to match everything on the correct cycle, unless I explicitly stated. Nor spot the apparent mistakes such as the wrong dimensions of the output matrix.
+1 LLM might be perfect for debugging and spotting details we miss, it lacks of logic when a real concept needs to be applied. One of the things I spent the most time doing was to explain to Claude the calculation logic, such as what Matrix Multiplication is, and how shall it be done in a data stream like ours. In the beginning I wasn’t aware it doesn’t truly ‘understand’, because it can explain matrix multiplication in perfect sentences. After realising its shortcomings, I have spent substantial amount of time, giving examples to it how the calculation and data selection logic should work, Claude seemed to understand after some examples, and gave back the correct answers if I ask in hypothetical terms, but it would be unable to produce the correct Verilog logic, unable to match everything on the correct cycle, unless I explicitly stated. Nor spot the apparent mistakes such as the wrong dimensions of the output matrix.
 
 2 LLM is pretty bad as maths. Basic arithmetic. I wouldn’t trust their answers if the numbers get big or equations gets long. 
 
-3 They get stuck in loops sometimes, so you need to either feed it some radically new information or open a new chat. 
+3 They get stuck in loops sometimes, so you need to either feed it some completely new information or open a new chat. 
 
-4 They will give you relatively similar answers, or designs in this case, for a KWS accelerator, across several LLM. Unless you start to read papers or get information elsewhere, they won’t give you anything ‘new’. Therefore I’m skeptical about its ability to create- or let’s say, innovate. 
+4 They will give you relatively similar answers, or designs in this case, for a KWS accelerator, across several LLM. Unless you start to read papers or feed it information elsewhere, they won’t give you anything ‘new’. Therefore I’m skeptical about its ability to create- or let’s say, innovate. 
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
