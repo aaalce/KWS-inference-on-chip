@@ -26,31 +26,6 @@ Our Scope: We focus on the stages of the keyword spotting acoustic model right a
 
 
 <!-- GETTING STARTED -->
-## Hardware modules
-
-
-### Overview
-
-This is a simple outline for our RISC-V based KWS accelerator. 
-
-Fixed-point arithmetic is adopted to simplify the hardwar design. To preserve the the fractional part of the data, we converted our weights and inputs to 32 bits fixed-point 1.7.24 format.That is 1 Sign bit, 7 bits for the integer part, 24 bits for the fractional part.
-
-The input features and weights are initialized on the SRAM inside the user project area.<br>
-
-The major components include <br>
-	1. A finite state machine as a **controller** for fetching instructions and orchestrating other modules <br>
-(CNN component below)<br>
-    2.**CMVN pool** Cepstral mean and variance normalization pool. The input data is normalized and flattened here. <br>
-    3.**Linear module** is adopted to **compute matrix multiplications** between two matrices of 50x20 and 20x20 for linear transformation. <br>
-    4.**ReLU function module** to perform ReLU function <br> <br>
-    5.**Dilated CNN module** to perform CNN with systolic array (to be tested) <br>
-    6.**Batch normalize module** to be tested) <br>
-    7.**Sigmoid Activation module** (to be tested) <br>
-
-### Results for the hardware modules
-The hardened modules, CMVN(normalising pool), ReLU, Linear, are all successfully tested before hardening. The Linear module was rewrite last minute with a register file because I couldn’t figure out how to correctly incorporate the Efabless SRAM 😅.
-Rest of the calculation modules will have their Verilog code provided, on the roadmap I would like to finish in later times. 
-I have attached my attempt and code with each attempt. 
 
 
 ## KWS Model with Dilated CNN
@@ -74,10 +49,10 @@ Dilated Convolutional Neural Networks (CNNs) are chosen for their ability to han
 
 ### Model Training:
 
-Train the deep learning model using the prepared dataset. This involves data preprocessing, model selection, and optimization to ensure high accuracy in keyword detection.
+We train the deep learning model using the prepared dataset with Pytorch. This involves data preprocessing, model selection, and optimization to ensure high accuracy in keyword detection.
 
 Implementation in Python with pure tensor:
-Implement the trained model in a Python environment, ensuring it is **free** from external library dependencies. This makes integration with hardware more straightforward.
+Rewrite and implement the trained model in a Python environment, ensuring it is **free** from external library dependencies. This makes integration with hardware more straightforward.
 
 ### Weight Extraction:
 Extract the model weights after the Python implementation. These weights are crucial for deploying the model on hardware.
@@ -91,6 +66,19 @@ Each iteration(try) of fresh new version was labeled (both chat and verilog file
 We use the LLM Claude to successfully create CMVN, ReLU, Linear module, with Verilog code and a python testbench in Cocotb. The dilated CNN and Sigmoid modules wasn't succesfully tested with it's calculation logic. They were not hardened. 
 The most challenging part of this excersice was to generate a Linear module that performs linear transformation, in our case, a matrix multiplication of \[50x20\] x \[20x20\].This is the part where I found out LLMs don't really 'understand'(details at the bottom of the file).
 
+### Why Lib-free KWS?
+The original plan was simple: train the model, feed into Claude, ask it to write the code, boom. Unfortunatly it didn't work. PyTorch's modules are encapsulated at too high level. PyTorch is a popular deep learning framework that provides high-level abstractions and modules for building neural networks. These abstractions and modules are designed to simplify the development process and make it easier to create complex models. However, the high-level nature of PyTorch's modules made it challenging for Language Models (LLMs) to understand the underlying computational logic. 
+Writing it in a lib-free manner is to facilitate LLM's understanding of the computational logic and convert it into Verilog code for the KWS model, this means avoiding the use of high-level PyTorch modules and instead implementing the model using lower-level operations and primitives.
+By writing the model in a lib-free way, the computational logic becomes more explicit and transparent. This can help LLMs to better understand the step-by-step operations and data flow within the model. 
+
+### Quantization?
+We took a lot of radical paths to try things out. Quantization is one of them. The total weights of our first draft was around 400kB- pretty much impossible to fit in Caravel user area as register files. The first thing that came up to our mind was to quantize the model from float 32 to int 8. 
+Reasons for **not** using quantization:
+1/.PyTorch does not convert all data types to int8.
+2/.During the quantization process, PyTorch modifies the model structure, making it impossible for us to extract (and implement as lib-free).
+3/.The accuracy of the model decreases after quantization:our model has a lot weights data that as small as 10^-8, int 8 doesn't provide enough range and granularity for the weights, a lot of weights became 0 if we convert them to int8. In fact, in later stage, we tried to convert the weights to int 16 and the granularity was still not enough. (It's calculated with 2^-x, x is the number of bits you reserved for the fractional parts)
+Now let me explain a bit more on point 2: When applying quantization to a PyTorch model, the framework modify the model's structure to accommodate the quantization process by adding quantization-specific layers and operations, such as quantization and dequantization nodes. That means the even though **during the calculation operation data can be in int 8 or int 16, after the operation and before the next operation they were convert back to float 32.** This method ensures a smaller model and fast processing speed but doesnt solve our problem of having massive weights information. Also, quantization and dequantization nodes highly dependant on pytorch encapsulation- consider limited time we had, we gave up unwrapping Quantization nodes to Lib-free python and decided to focus on preserving the original model's structure and accuracy without Quantization. 
+
 ### Implementation in Verilog:
 Translate the Python implementation and extracted weights into Verilog for hardware implementation. This step involves designing the hardware description language suitable for chip design. I ran into some unexpected diffulties too, such as error from Efabless SRAM or rookie mistakes like adapoting a Full-Wrapper Flattening strategy but ran out of RAM on my own computer.
 
@@ -99,6 +87,31 @@ By implementing KWS inference on a chip, we aim to create a low-latency, efficie
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+## Hardware modules
+
+
+## Overview
+
+This is a simple outline for our RISC-V based KWS accelerator. 
+
+Fixed-point arithmetic is adopted to simplify the hardwar design. To preserve the the fractional part of the data, we converted our weights and inputs to 32 bits fixed-point 1.7.24 format.That is 1 Sign bit, 7 bits for the integer part, 24 bits for the fractional part.
+
+The input features and weights are initialized on the SRAM inside the user project area.<br>
+
+The major components include <br>
+	1. A finite state machine as a **controller** for fetching instructions and orchestrating other modules <br>
+(CNN component below)<br>
+    2.**CMVN pool** Cepstral mean and variance normalization pool. The input data is normalized and flattened here. <br>
+    3.**Linear module** is adopted to **compute matrix multiplications** between two matrices of 50x20 and 20x20 for linear transformation. <br>
+    4.**ReLU function module** to perform ReLU function <br> <br>
+    5.**Dilated CNN module** to perform CNN with systolic array (to be tested) <br>
+    6.**Batch normalize module** to be tested) <br>
+    7.**Sigmoid Activation module** (to be tested) <br>
+
+### Results for the hardware modules
+The hardened modules, CMVN(normalising pool), ReLU, Linear, are all successfully tested before hardening. The Linear module was rewrite last minute with a register file because I couldn’t figure out how to correctly incorporate the Efabless SRAM 😅.
+Rest of the calculation modules will have their Verilog code provided, on the roadmap I would like to finish in later times. 
+I have attached my attempt and code with each attempt. 
 
 
 
@@ -116,18 +129,15 @@ See the [open issues](https://github.com/github_username/repo_name/issues) for a
 
 <!-- CONTRIBUTING -->
 ## Contributing
+Xiaoyu Wen -- https://github.com/aaalce
+Hongzhi Hou --https://github.com/hoho1st
+Jian Sun --https://github.com/jsun1006
+Feel free to contact us if you have any questions!
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
-
-<!-- LICENSE -->
-## License
-
-Distributed under the MIT License. See `LICENSE.txt` for more information.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 
