@@ -2,10 +2,10 @@
 
 00 Designing a KWS Inference Accelerator for Caravel Harness SoC
 
-X:
+##X:
 hiya, I'm trying to design a KWS inference accelerator inside a Caravel Harness SoC user project area. I have a pretrained model in python, which included a dilated CNN. I have obtained the parameters. Given the pipeline and parameters file(pipeline&para), and the original python code(kws_hhz), can you give me an simple ISA and some idea about the macro architecture please?
 
-Claude:
+##Claude:
 Based on the provided pipeline, parameters, and the original Python code, here's a suggestion for a simple ISA (Instruction Set Architecture) and macro architecture for your KWS (Keyword Spotting) inference accelerator:
 ISA:
 CMVN (Cepstral Mean and Variance Normalization)
@@ -51,12 +51,12 @@ The execution flow would be controlled by the Control Unit, which fetches instru
 This is a simplified ISA and macro architecture based on the provided information. You can further refine and optimize it based on your specific requirements, such as data precision, memory bandwidth, and performance targets. Additionally, you may need to consider the interface with the Caravel Harness SoC and ensure proper integration with the user project area.
 
 
-X:
+##X:
 The accelerator interfaces with a RISC-V core on Caravel Harness management area via wishbone bus. I would need to load input data and parameters from the RISC-V core and send out output too, can you include some instructions for this?
 The other thing I need you to be aware of is there are two process that’s using the convolution functionality, the Dilated CNN and CNN, which Dilated CNN would require an extra step of padding. Hence I would like to have two instructions: CNN and Padding instead of Dilated CNN
 Can you update the ISA accordingly?
 
-Claude:
+##Claude:
 Certainly! Here's an updated ISA that includes instructions for loading input data and parameters from the RISC-V core, sending output back, and separate instructions for CNN and Padding:
 ISA:
 LOAD_INPUT
@@ -110,10 +110,10 @@ The Wishbone bus interface in the accelerator would handle the communication and
 
 
 
-X
+##X
 I would like to have a finite state machine as my controller. Systolic architecture for my calculation area.
 
-Claude:
+##Claude:
 Great! Here's an updated macro architecture that incorporates a finite state machine (FSM) as the controller and a systolic array for the calculation area:
 Macro Architecture:
 Input Buffer: A memory buffer to store the input features.
@@ -161,10 +161,10 @@ By combining the FSM controller, systolic array, activation function units, and 
 
 
 
-X
+##X
 Perfect! Can you come up with a formal ISA including opcodes and descriptions?
 
-Claude:
+##Claude:
 Certainly! Here's a formal ISA with opcodes and descriptions for the KWS inference accelerator:
 Opcode
 Instruction
@@ -240,10 +240,10 @@ The accelerator's FSM controller interprets these instructions and generates the
 
 
 
-X
+##X
 I'm trying to save storage, so all my data will be in 16 bits format, will you be able to update the instructions and operand?
 
-Claude:
+##Claude:
 Certainly! Here's the updated ISA with 16-bit instructions and operands:
 Opcode
 Instruction

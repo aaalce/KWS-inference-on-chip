@@ -4,10 +4,10 @@
 Calculating Range for 1.5.10 Fixed-Point Data
 
 
-X:
+##X:
 how to calculate the range for fixed-point 16 type data of 1.5.10?
 
-Claude:
+##Claude:
 To calculate the range for a fixed-point 16-bit data type with 1 sign bit, 5 integer bits, and 10 fractional bits (1.5.10), you need to consider the following:
 The sign bit determines whether the number is positive or negative.
 The integer bits determine the range of whole numbers that can be represented.
@@ -27,9 +27,9 @@ The minimum value is -16 because the leftmost bit is used for the sign, and the 
 Copy
 
 
-X:
+##X:
 what about 1.6.9?
-Claude:
+##Claude:
 For a fixed-point 16-bit data type with 1 sign bit, 6 integer bits, and 9 fractional bits (1.6.9), the range and precision can be calculated as follows:
 The sign bit allows for both positive and negative numbers.
 With 6 integer bits, the range of whole numbers is:
