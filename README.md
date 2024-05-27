@@ -75,8 +75,11 @@ By writing the model in a lib-free way, the computational logic becomes more exp
 ### Quantization?
 We took a lot of radical paths to try things out. Quantization is one of them. The total weights of our first draft was around 400kB- pretty much impossible to fit in Caravel user area as register files. The first thing that came up to our mind was to quantize the model from float 32 to int 8. 
 Reasons for **not** using quantization:
+
 1/.PyTorch does not convert all data types to int8.
+
 2/.During the quantization process, PyTorch modifies the model structure, making it impossible for us to extract (and implement as lib-free).
+
 3/.The accuracy of the model decreases after quantization:our model has a lot weights data that as small as 10^-8, int 8 doesn't provide enough range and granularity for the weights, a lot of weights became 0 if we convert them to int8. In fact, in later stage, we tried to convert the weights to int 16 and the granularity was still not enough. (It's calculated with 2^-x, x is the number of bits you reserved for the fractional parts)
 Now let me explain a bit more on point 2: When applying quantization to a PyTorch model, the framework modify the model's structure to accommodate the quantization process by adding quantization-specific layers and operations, such as quantization and dequantization nodes. That means the even though **during the calculation operation data can be in int 8 or int 16, after the operation and before the next operation they were convert back to float 32.** This method ensures a smaller model and fast processing speed but doesnt solve our problem of having massive weights information. Also, quantization and dequantization nodes highly dependant on pytorch encapsulation- consider limited time we had, we gave up unwrapping Quantization nodes to Lib-free python and decided to focus on preserving the original model's structure and accuracy without Quantization. 
 
@@ -130,8 +133,8 @@ I have attached my attempt and code with each attempt.
 
 <!-- CONTRIBUTING -->
 ## Contributing
-Xiaoyu Wen -- https://github.com/aaalce <br>
-Hongzhi Hou --https://github.com/hoho1st <br>
+Xiaoyu Wen -- https://github.com/aaalce --www.linkedin.com/in/xiaoyu-wen-4b5974165 <br> 
+Hongzhi Hou --https://github.com/hoho1st --https://www.linkedin.com/in/hongzhi-hou-033b32186 <br>
 Jian Sun --https://github.com/jsun1006 <br>
 Feel free to contact us if you have any questions!
 
