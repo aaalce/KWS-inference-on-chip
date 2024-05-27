@@ -62,7 +62,10 @@ We use the LLM Claude to successfully create CMVN, ReLU, Linear module, with Ver
 The most challenging part of this excersice was to generate a Linear module that performs linear transformation, in our case, a matrix multiplication of \[50x20\] x \[20x20\].This is the part where I found out LLMs don't really 'understand'(details at the bottom of the file).
 
 ### How to read the Chats with Claude:
-It's numbered! There isn't an export chat button for Claude so I pasted them in text files. Please find all the attachments I used to talk with Claude, including our lib free model, parameters, and a example prompt to generate new modules I developed over time. I have pasted our ISA and FSM into a test file too so it can have a look during generating the new modules.
+It's numbered! There isn't an export chat button for Claude so I pasted them in text files. Please find all the attachments I used to talk with Claude, including our lib free model, parameters, and a example prompt to generate new modules I developed over time in a seperate folder. I have pasted our ISA and FSM into a test file too so it can have a look during generating the new modules.
+
+### Prompt file directory
+You can find everything I used to generate code from Claude. There's a subdirectory with the trained models in python. Inference_0508 is our first version with quantization, Inference_0510 is our second version with a input matrix size of 300x20 (300frames x 20 features), Inference_0519 is our final version with a input matrix size of 50x20. They were in html version because it's easier to check with browser, but we do have a jupyter notebook version attached.
 
 ### Why Lib-free KWS?
 The original plan was simple: train the model, feed into Claude, ask it to write the code, boom. Unfortunatly it didn't work. PyTorch's modules are encapsulated at too high level. PyTorch is a popular deep learning framework that provides high-level abstractions and modules for building neural networks. These abstractions and modules are designed to simplify the development process and make it easier to create complex models. However, the high-level nature of PyTorch's modules made it challenging for Language Models (LLMs) to understand the underlying computational logic. 
