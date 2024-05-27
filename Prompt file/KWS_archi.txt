@@ -1,0 +1,107 @@
+Wishbone Slave Interface:
+
+Provides an interface between the KWS accelerator and the Wishbone bus.
+Receives control signals and data from the master (RISC-V core) via the Wishbone bus.
+Handles read and write requests from the master to the accelerator's internal registers and buffers.
+Input: Wishbone bus signals (data, address, control, etc.).
+Output: Data and status signals to the Wishbone bus.
+
+
+Configuration and Status Registers (CSRs):
+
+Store configuration parameters and status information for the accelerator.
+Accessible by the RISC-V core via the Wishbone slave interface.
+Input: Read and write requests from the Wishbone slave interface.
+Output: Configuration data to the accelerator's internal modules and status data to the Wishbone slave interface.
+
+
+Input Buffer:
+
+Stores the input data received from the RISC-V core via the Wishbone slave interface.
+Provides input data to the CMVN module.
+Input: Data from the Wishbone slave interface.
+Output: Input data tensor to the CMVN module.
+
+
+Output Buffer:
+
+Stores the final output data from the Sigmoid module.
+Provides output data to the RISC-V core via the Wishbone slave interface.
+Input: Final output tensor from the Sigmoid module.
+Output: Output data to the Wishbone slave interface.
+
+
+CMVN Module:
+
+Applies Cepstral Mean and Variance Normalization (CMVN) to the input data.
+Input: Input data tensor from the Input Buffer.
+Output: Normalized input data tensor to the Linear module.
+
+
+Linear Module:
+
+Performs linear transformation on the normalized input data using matrix multiplication.
+Utilizes the systolic array for matrix multiplication.
+Input: Normalized input data tensor from the CMVN module.
+Output: Linearly transformed output tensor to the ReLU module.
+
+
+ReLU Module:
+
+Applies the ReLU activation function element-wise to the input tensor.
+Input: Output tensor from the Linear, Batch Normalize, or CNN module.
+Output: Activated output tensor to the next module (Padding or next layer).
+
+
+Padding Module:
+
+Adds padding to the input tensor based on the specified padding size.
+Input: Output tensor from the ReLU or Batch Normalize module.
+Output: Padded input tensor to the Dilated CNN module.
+
+
+Dilated CNN Module:
+
+Performs dilated convolution on the padded input tensor using the specified filters and dilation rate.
+Utilizes the systolic array for convolution operation.
+Input: Padded input tensor from the Padding module.
+Output: Output tensor after dilated convolution to the Batch Normalize module.
+
+
+Batch Normalize Module:
+
+Applies batch normalization to the input tensor, normalizing the activations across the batch.
+Input: Output tensor from the Dilated CNN or CNN module.
+Output: Normalized output tensor to the ReLU module.
+
+
+CNN Module:
+
+Performs standard convolution on the input tensor using the specified filters.
+Utilizes the systolic array for convolution operation.
+Input: Output tensor from the ReLU or Batch Normalize module.
+Output: Output tensor after convolution to the Batch Normalize module.
+
+
+Sigmoid Module:
+
+Applies the sigmoid activation function element-wise to the input tensor.
+Input: Output tensor from the final Linear module.
+Output: Final output tensor to the Output Buffer.
+
+
+FSM Controller:
+
+Controls the overall execution flow of the accelerator based on the pipeline sequence.
+Generates control signals for the systolic array, activation modules, padding module, and batch normalization module.
+Communicates with the RISC-V core via the Wishbone slave interface for handshake and status signals.
+Input: Control signals from the Wishbone slave interface and status signals from the internal modules.
+Output: Control signals to the internal modules and status signals to the Wishbone slave interface.
+
+
+Systolic Array:
+
+Performs matrix multiplication and convolution operations for the Linear, Dilated CNN, and CNN modules.
+Receives control signals from the FSM controller to configure its operation based on the layer type.
+Input: Input data and weights/filters from the respective modules.
+Output: Output data to the respective modules.

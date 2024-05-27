@@ -1,0 +1,36 @@
+Hi! i have a KWS accelerator with the following Micro architecture and ISA. I have also included a copy of our python code for the KWS accelerator called inference0519. I would like to implement it on Caravel Harness, a SoC. The KWS accelerator will be in the user project area wrapper of Caravel Harness, interface with a RISC-V core via wishbone bus. My calculation is in 32 fixed point data in 1.7.24 format, with 1 bit for sign, 7 bit for integer and 24 bit for fractions. My input file is a tensor in the shape of 50x20. I have no bias throughout the calculation. The Linear module gets input from either CMVN module or ReLU module. It interfaces CMVN and ReLU to get a input tensor, and give the ReLU and Sigmoid module its output. The Linear module is controlled by a FSM. I have attached my verilog code for FSM(kws_fsm.txt), CMVN module(cmvn.txt) and ISA(KWS_ISA32.txt) for the KWS accelerator. I have also attached the original python code for the KWS model. According to these, can you write me a code in verilog for the Linear module?
+
+Can you come up with a python test code for cocotb that test the Linear module? my data input came from a file called fromcmvn.json. The data format is 32 fixed-point 1.7.24. The test code needs to contain a debug module which tells me what it produces each iteration, the test code also produces a vvp file I can check in GKTwave , and an output .json file after the calculation. Please include a timeout for the testcode.
+
+can you also write a makefile for me please? Here's an example
+# Makefile
+# defaults
+SIM ?= icarus
+TOPLEVEL_LANG ?= verilog
+# Add your Verilog source files here
+VERILOG_SOURCES += $(PWD)/cmvn.v
+# Add your VHDL source files here
+# VHDL_SOURCES += $(PWD)/my_vhdl_file.vhd
+# TOPLEVEL is the name of the toplevel module in your Verilog or VHDL file
+TOPLEVEL = cmvn
+# MODULE is the basename of the Python test file
+MODULE = test_cmvn
+# include cocotb's make rules to take care of the simulator setup
+include $(shell cocotb-config --makefiles)/Makefile.sim
+
+Hi! i have a KWS accelerator with the following Micro architecture and ISA. I have also included a copy of our python code for the KWS accelerator called inference0519. I would like to implement it on Caravel Harness, a SoC. The KWS accelerator will be in the user project area wrapper of Caravel Harness, interface with a RISC-V core via wishbone bus. My calculation is in 32 fixed point data in 1.7.24 format, with 1 bit for sign, 7 bit for integer and 24 bit for fractions. My input file is a tensor in the shape of 50x20. I have no bias throughout the calculation. The Linear module gets input from either CMVN module or ReLU module. It interfaces CMVN and ReLU to get a input tensor, and give the ReLU and Sigmoid module its output. I would like to store my Linear weights for linear_subsampling in a SRAM provided by EFabless. linear_subsampling data is stored in a fill called weights_init_0.mem. The Linear module is controlled by a FSM. I have attached my verilog code for FSM(kws_fsm.txt), CMVN module(cmvn.txt) and ISA(KWS_ISA32.txt) for the KWS accelerator. I have attached the relavent verilog file for the SRAM. I have also attached the original python code(inference_0519) for the KWS model. According to these, can you write me a code in verilog for the Linear module?
+
+Hi! i have a KWS accelerator with the following Micro architecture and ISA. I have also included a copy of our python code for the KWS accelerator called inference0519. I would like to implement it on Caravel Harness, a SoC. The KWS accelerator will be in the user project area wrapper of Caravel Harness, interface with a RISC-V core via wishbone bus. My calculation is in 32 fixed point data in 1.7.24 format, with 1 bit for sign, 7 bit for integer and 24 bit for fractions. My input file is a tensor in the shape of 50x20. I have no bias throughout the calculation. The Linear module gets input from either CMVN module or ReLU module. It interfaces CMVN and ReLU to get a input tensor, and give the ReLU and Sigmoid module its output. I would like to store my Linear weights for linear_subsampling in a SRAM provided by EFabless. linear_subsampling data is stored in a fill called weights_init_0.mem. The Linear module is controlled by a FSM. I have attached my verilog code for FSM(kws_fsm.txt), CMVN module(cmvn.txt) and ISA(KWS_ISA32.txt) for the KWS accelerator. I have attached the relavent verilog file for the SRAM. I have also attached the original python code(inference_0519) for the KWS model. According to these, can you write me a code in verilog for the Linear module?
+
+
+Hi! i have a KWS accelerator with the following Micro architecture and ISA. I have also included a copy of our python code for the KWS accelerator called inference0519. I would like to implement it on Caravel Harness, a SoC. The KWS accelerator will be in the user project area wrapper of Caravel Harness, interface with a RISC-V core via wishbone bus. My calculation is in 32 fixed point data in 1.7.24 format, with 1 bit for sign, 7 bit for integer and 24 bit for fractions. My input file is a flattened tensor in the shape of 50x20, where it contains 50 list, each list contains 20 numbers, each list is a Row. My input weights is a 20x20 tensor, 20 list that contains 20 numbers, where each list is a column. I have no bias throughout the calculation. Which means for the Linear module is a matrix multiplication of [50,20]x[20,20]. The Linear module gets input from either CMVN module or ReLU module. It interfaces CMVN and ReLU to get a input tensor, and give the ReLU and Sigmoid module its output. The Linear module is controlled by a FSM. I have attached my verilog code for FSM(kws_fsm.txt), CMVN module(cmvn.txt) and ISA(KWS_ISA32.txt) for the KWS accelerator. I have also attached the original python code(inference_0519) for the KWS model, and an example file for a [3,3]x[3,3] matrix multiplication. According to these, can you write me a code in verilog for the Linear module?
+
+Can you come up with a python test code for cocotb that test the Linear module? my data input came from a file called fromcmvn.json. The weights file came from linear1724.json. I have copied the txt version of both files here. The data format is 32 fixed-point 1.7.24. The test code needs to contain a debug module which writes what it produces each iteration to a log file,  and needs a output .json file for storing output. Please include a timeout for the testcode.
+
+X
+The input data is divided into subsets of 20 elements each, based on the row index (input_addr / 20).
+The column index is determined by input_addr[4:0], which represents the position within each subset of input data.
+In the MULTIPLY state, the linear weight is read from the register file.
+The input data is multiplied with the corresponding linear weight, and the result is stored in mult_result.
+In the ACCUMULATE state, the multiplication result is truncated to 1.7.24 format and accumulated with the previous accumulation result (acc_result). At the same time, a new linear weight and input data is read, ready to be used in the MULTIPLY state.
+After processing 20 elements (input_counter reaches 19), the accumulated result is stored as the output data, and the output_valid signal is set to indicate a valid output.

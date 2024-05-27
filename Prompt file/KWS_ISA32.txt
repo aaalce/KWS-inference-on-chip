@@ -1,0 +1,40 @@
+Certainly! Here's a formal ISA with opcodes and descriptions for the KWS inference accelerator:
+
+| Opcode | Instruction   | Operands                         | Description                                                                                  |
+|--------|---------------|----------------------------------|----------------------------------------------------------------------------------------------|
+| 0x00   | LOAD_INPUT    | input_address, input_size        | Loads the input data from the RISC-V core's memory to the accelerator's input buffer.        |
+| 0x01   | LOAD_PARAM    | param_address, param_size        | Loads the model parameters from the RISC-V core's memory to the accelerator's parameter memory. |
+| 0x02   | STORE_OUTPUT  | output_address                   | Stores the output results from the accelerator's output buffer to the RISC-V core's memory.   |
+| 0x03   | CMVN          | input_data, cmvn_mean, cmvn_istd | Applies CMVN normalization to the input data.                                               |
+| 0x04   | LINEAR        | input_data, linear_weight, linear_bias | Performs a linear transformation on the input data.                                   |
+| 0x05   | RELU          | input_data                       | Applies the ReLU activation function to the input data.                                      |
+| 0x06   | PADDING       | input_data, padding_size         | Applies padding to the input data by adding zeros around the edges.                          |
+| 0x07   | CNN           | input_data, kernel_size, cnn_weight, cnn_bias | Performs a convolution operation on the input data.                                |
+| 0x08   | BATCH_NORM    | input_data, bn_gamma, bn_beta, bn_mean, bn_var | Applies batch normalization to the input data.                                  |
+| 0x09   | SIGMOID       | input_data                       | Applies the sigmoid activation function to the input data.                                   |
+| 0x0A   | START         | -                                | Starts the execution of the accelerator.                                                     |
+| 0x0B   | STOP          | -                                | Stops the execution of the accelerator.                                                      |
+
+Instruction Format:
+- Each instruction is 32 bits wide.
+- The opcode is represented by the first 4 bits (bits 31-28).
+- The remaining 28 bits (bits 27-0) are used for operands, which can include memory addresses, data sizes, or immediate values depending on the instruction.
+
+Operand Format:
+- `input_address`, `param_address`, `output_address`: 32-bit memory addresses pointing to the respective data in the RISC-V core's memory.
+- `input_size`, `param_size`: 32-bit unsigned integers specifying the size of the input data and model parameters, respectively.
+- `input_data`, `cmvn_mean`, `cmvn_istd`, `linear_weight`, `linear_bias`, `kernel_size`, `cnn_weight`, `cnn_bias`, `bn_gamma`, `bn_beta`, `bn_mean`, `bn_var`: 32-bit immediate values or memory addresses pointing to the respective data in the accelerator's memory.
+- `padding_size`: 32-bit unsigned integer specifying the size of padding to be applied.
+
+Execution Flow:
+1. The RISC-V core sends the `LOAD_INPUT` and `LOAD_PARAM` instructions to load the input data and model parameters into the accelerator's memory.
+2. The RISC-V core sends the `START` instruction to begin the execution of the accelerator.
+3. The accelerator's FSM controller starts executing the pipeline sequence based on the received instructions.
+4. The accelerator performs the specified operations using the systolic array and activation function units.
+5. Upon completion, the accelerator stores the output results in its output buffer.
+6. The RISC-V core sends the `STORE_OUTPUT` instruction to retrieve the output results from the accelerator's output buffer.
+7. The RISC-V core sends the `STOP` instruction to halt the execution of the accelerator.
+
+This ISA provides a set of instructions for loading data, performing KWS inference operations, and storing the output results. The opcode field identifies the specific instruction, while the operands provide the necessary data or memory addresses for each instruction.
+
+The accelerator's FSM controller interprets these instructions and generates the appropriate control signals to orchestrate the execution flow within the accelerator's systolic array and activation function units.

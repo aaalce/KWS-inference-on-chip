@@ -1,0 +1,18 @@
+HI, I'm trying to write a CMVN module for a KWS acclerator. the CMVN module applies Cepstral Mean and Variance Normalization (CMVN) to the input data. (x - mean) * istd. My calculation is in 32 fixed point data in 1.7.24 format, with 1 bit for sign, 7 bit for integer and 24 bit for fractions. My input file is a tensor in the shape of 50x20. The module stores parameters cmvn_mean and cmvn_istd in the register file so it doesn't have to load from else where. It interfaces with a input Buffer to get the input data tensor.
+I have attached my verilog code for FSM(kws_fsm.txt) and ISA(KWS_ISA32.txt) for the KWS accelerator. I have also attached my CMVN parameters(CMVNpara.txt) and the original python code for the KWS model.
+Can you write me a verilog code for the CMVN module?
+
+Hi! i have a KWS accelerator with the following Micro architecture and ISA. I have also included a copy of our python code for the KWS accelerator called inference0519. I would like to implement it on Caravel Harness, a SoC. The KWS accelerator will be in the user project area wrapper of Caravel Harness, interface with a RISC-V core via wishbone bus. My calculation is in 32 fixed point data in 1.7.24 format, with 1 bit for sign, 7 bit for integer and 24 bit for fractions. My input file is a tensor in the shape of 50x20. The module stores parameters cmvn_mean and cmvn_istd in the register file so it doesn't have to load from else where. It interfaces with a input Buffer to get the input data tensor. The CMVN module is controlled by a FSM. I have attached my verilog code for FSM(kws_fsm.txt) and ISA(KWS_ISA32.txt) for the KWS accelerator. I have also attached my CMVN parameters(CMVNpara.txt) and the original python code for the KWS model. According to these, can you write me a code in verilog for the CMVN Module? 
+
+can you come up with a python test code for cocotb that test the CMVN module? my data input came from a file called test1.json. The test code needs to contain a debug module which tells me what it produces each iteration, the test code also produces a vvp file i can check in GKTwave , and an output file after the calculation. Please include a timeout for the testcode.
+This is what the input file roughly looks like:{"key": "8be97c6c-d775-483a-9841-c1f220d60e3c", "label": -1, "fbank": [[146033632, 168823792, 135768208, 155775280, 100327904, 157234192, 182825664, 249812864, 247492832, 145663568, 119316696, 136543184, 163368224, 153777680, 158237440, 158583312, 166756528, 164288720, 168980656, 167843904], [133344944, 146822112, 120968872, 122671048, 130179664, 172148432, 196320160, 232741392, 243616912, 155216800, 128762440, 140682624, 149237248, 147608496, 162432272, 162219104, 161094384, 170479760, 169897664, 168331376], ...71440, 171803120, 165458480, 177162224, 173947552, 168344448, 176500976, 173528048]]}
+
+Hiya, I want to make a KWS accelerator on Caravel Harness, a SoC, in the user project area.  Currently I have a CMVN module and a FSM. I have attached my verilog code for FSM(kws_fsm.txt), CMVN module(cmvn.txt) and ISA(KWS_ISA32.txt) for the KWS accelerator. The KWS accelerator will be in the user project area wrapper of Caravel Harness, interface with a RISC-V core via wishbone bus. Can you produce a wishbone wrapper for CMVN and FSM? I have attached the example for example_module_wrapper
+
+Hi! It's working. Can you modify the test file slightly to make the output file a .json file with format like this?[
+  "be1b1e0b",
+  "3abe7586",
+  "3bd4db63",
+  "3cba7102",
+  "3e734f80"
+]
