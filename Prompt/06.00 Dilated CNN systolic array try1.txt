@@ -1,0 +1,200 @@
+
+
+
+06.00 Dilated CNN systolic array try1
+
+X
+4
+cmvn
+TXT
+kws_fsm
+TXT
+inference_0519
+TXT
+KWS_ISA32
+TXT
+X
+Hi! i have a KWS accelerator with the following Micro architecture and ISA. I have also included a copy of our python code for the KWS accelerator called inference0519. I would like to implement it on Caravel Harness, a SoC. The KWS accelerator will be in the user project area wrapper of Caravel Harness, interface with a RISC-V core via wishbone bus. My calculation is in 32 fixed point data in 1.7.24 format, with 1 bit for sign, 7 bit for integer and 24 bit for fractions. My input file is a tensor in the shape of 50x20. The DilatedCNN module gets input from ReLU module. It interfaces ReLU to get a input tensor, and give Batch Normalize its output. The DilatedCNN module is controlled by a FSM. I have attached my verilog code for FSM(kws_fsm.txt), CMVN module(cmvn.txt) and ISA(KWS_ISA32.txt) for the KWS accelerator. I have also attached the original python code for the KWS model. According to these, can you write me a code in verilog for the DilatedCNN module?
+Is it possible to enable a systolic array design?
+Yes, it is possible to implement a systolic array design for the DilatedCNN module in your KWS accelerator. Based on the provided microarchitecture, ISA, and the reference Python code, here's a Verilog code template for the DilatedCNN module with a systolic array design:
+verilog
+
+Copy code
+module DilatedCNN (
+  input wire clk,
+  input wire rst_n,
+  input wire cnn_en,
+  input wire [31:0] input_data,
+  input wire [4:0] input_addr,
+  output reg [31:0] output_data,
+  output reg [4:0] output_addr,
+  output reg output_valid
+);
+
+  // Systolic array parameters
+  localparam ARRAY_SIZE = 8;
+  localparam KERNEL_SIZE = 3;
+  localparam DILATION_RATE = 2;
+
+  // Systolic array registers
+  reg signed [31:0] systolic_array [0:ARRAY_SIZE-1][0:ARRAY_SIZE-1];
+  reg signed [31:0] kernel [0:KERNEL_SIZE-1][0:KERNEL_SIZE-1];
+  reg signed [31:0] bias;
+
+  // Input and output buffers
+  reg signed [31:0] input_buffer [0:49][0:19];
+  reg signed [31:0] output_buffer [0:49][0:19];
+
+  // Control signals
+  reg [5:0] row_counter;
+  reg [5:0] col_counter;
+  reg [2:0] kernel_row;
+  reg [2:0] kernel_col;
+
+  // State machine states
+  localparam IDLE = 2'b00;
+  localparam LOAD_KERNEL = 2'b01;
+  localparam LOAD_INPUT = 2'b10;
+  localparam COMPUTE = 2'b11;
+
+  reg [1:0] current_state;
+  reg [1:0] next_state;
+
+  // State transition logic
+  always @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+      current_state <= IDLE;
+    end else begin
+      current_state <= next_state;
+    end
+  end
+
+  // Next state logic
+  always @(*) begin
+    case (current_state)
+      IDLE: begin
+        if (cnn_en) begin
+          next_state = LOAD_KERNEL;
+        end else begin
+          next_state = IDLE;
+        end
+      end
+      LOAD_KERNEL: begin
+        if (kernel_row == KERNEL_SIZE - 1 && kernel_col == KERNEL_SIZE - 1) begin
+          next_state = LOAD_INPUT;
+        end else begin
+          next_state = LOAD_KERNEL;
+        end
+      end
+      LOAD_INPUT: begin
+        if (row_counter == 49 && col_counter == 19) begin
+          next_state = COMPUTE;
+        end else begin
+          next_state = LOAD_INPUT;
+        end
+      end
+      COMPUTE: begin
+        if (row_counter == 49 && col_counter == 19) begin
+          next_state = IDLE;
+        end else begin
+          next_state = COMPUTE;
+        end
+      end
+      default: begin
+        next_state = IDLE;
+      end
+    endcase
+  end
+
+  // Output logic
+  always @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+      // Reset logic
+      kernel_row <= 0;
+      kernel_col <= 0;
+      row_counter <= 0;
+      col_counter <= 0;
+      output_valid <= 0;
+    end else begin
+      case (current_state)
+        IDLE: begin
+          // Idle state logic
+          output_valid <= 0;
+        end
+        LOAD_KERNEL: begin
+          // Load kernel weights
+          kernel[kernel_row][kernel_col] <= input_data;
+          if (kernel_col == KERNEL_SIZE - 1) begin
+            kernel_row <= kernel_row + 1;
+            kernel_col <= 0;
+          end else begin
+            kernel_col <= kernel_col + 1;
+          end
+        end
+        LOAD_INPUT: begin
+          // Load input data into buffer
+          input_buffer[row_counter][col_counter] <= input_data;
+          if (col_counter == 19) begin
+            row_counter <= row_counter + 1;
+            col_counter <= 0;
+          end else begin
+            col_counter <= col_counter + 1;
+          end
+        end
+        COMPUTE: begin
+          // Systolic array computation
+          for (int i = 0; i < ARRAY_SIZE; i = i + 1) begin
+            for (int j = 0; j < ARRAY_SIZE; j = j + 1) begin
+              if (i < KERNEL_SIZE && j < KERNEL_SIZE) begin
+                systolic_array[i][j] <= kernel[i][j];
+              end else begin
+                systolic_array[i][j] <= input_buffer[row_counter + i - KERNEL_SIZE + 1][col_counter + j - KERNEL_SIZE + 1];
+              end
+            end
+          end
+
+          // Accumulate results
+          output_buffer[row_counter][col_counter] <= bias;
+          for (int i = 0; i < ARRAY_SIZE; i = i + 1) begin
+            for (int j = 0; j < ARRAY_SIZE; j = j + 1) begin
+              output_buffer[row_counter][col_counter] <= output_buffer[row_counter][col_counter] + systolic_array[i][j] * systolic_array[i+DILATION_RATE][j+DILATION_RATE];
+            end
+          end
+
+          // Update counters
+          if (col_counter == 19) begin
+            row_counter <= row_counter + 1;
+            col_counter <= 0;
+          end else begin
+            col_counter <= col_counter + 1;
+          end
+
+          // Set output signals
+          output_data <= output_buffer[row_counter][col_counter];
+          output_addr <= {row_counter, col_counter};
+          output_valid <= 1;
+        end
+      endcase
+    end
+  end
+
+endmodule
+In this Verilog code for the DilatedCNN module, we implement a systolic array design for efficient computation. The module has a state machine that controls the flow of loading the kernel weights, loading the input data, and performing the convolution computation.
+The systolic array is represented by a 2D array of registers (systolic_array). The kernel weights and bias are also stored in registers. The input and output data are buffered in separate 2D arrays (input_buffer and output_buffer).
+During the LOAD_KERNEL state, the kernel weights are loaded into the kernel registers. In the LOAD_INPUT state, the input data is loaded into the input_buffer.
+In the COMPUTE state, the systolic array is populated with the kernel weights and input data. The convolution computation is performed by accumulating the product of the systolic array elements with a dilation rate. The results are accumulated in the output_buffer.
+The output data, address, and valid signals are set accordingly based on the current state and the computed results.
+Note that this is a simplified version of the DilatedCNN module and may need further optimizations and adaptations based on your specific requirements, such as handling different kernel sizes, dilation rates, and padding.
+Remember to integrate this module with the other components of your KWS accelerator, such as the ReLU and Batch Normalize modules, and ensure proper interfacing with the RISC-V core via the wishbone bus.
+Copy
+Retry
+
+
+Claude does not have the ability to run the code it generates yet.
+Claude can make mistakes. Please double-check responses.
+
+
+
+
+3 Opus
+Use shift + return for new line
