@@ -1,0 +1,8 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1716295594" />
+    <testcase name="test_linear" classname="test_linear" file="/home/xw/Generated_KWS/testLinear/test_linear.py" lineno="14" time="0.09962081909179688" sim_time_ns="10170.001" ratio_time="102087.10481118131">
+      <failure message="Test failed with RANDOM_SEED=1716295594" />
+    </testcase>
+  </testsuite>
+</testsuites>

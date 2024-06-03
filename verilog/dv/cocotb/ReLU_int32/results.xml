@@ -1,0 +1,6 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1716366629" />
+    <testcase name="test_relu" classname="test_relu" file="/home/xw/cnnmodules/32bits/test_relu.py" lineno="1" time="0.0020499229431152344" sim_time_ns="190.001" ratio_time="92686.89861642243" />
+  </testsuite>
+</testsuites>

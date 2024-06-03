@@ -1,0 +1,6 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1717446540" />
+    <testcase name="test_relu" classname="test_relu" file="/home/xw/Generated_KWS/testReLU/test_relu.py" lineno="14" time="0.3320608139038086" sim_time_ns="30110.001" ratio_time="90676.16454352927" />
+  </testsuite>
+</testsuites>

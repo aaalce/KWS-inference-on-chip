@@ -1,0 +1,6 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1716445765" />
+    <testcase name="test_linear" classname="test_linear" file="/home/xw/Generated_KWS/testLinear/try6/test_linear.py" lineno="11" time="5.22030782699585" sim_time_ns="820220.001" ratio_time="157121.00285703174" />
+  </testsuite>
+</testsuites>
