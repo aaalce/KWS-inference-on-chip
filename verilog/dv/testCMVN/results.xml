@@ -1,0 +1,7 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1717446438" />
+    <testcase name="test_cmvn" classname="test_cmvn" file="/home/xw/Generated_KWS/testCMVN/test_cmvn.py" lineno="18" time="18.123778581619263" sim_time_ns="1538570.001" ratio_time="84892.34152090027" />
+    <testcase name="test_timeout" classname="test_cmvn" file="/home/xw/Generated_KWS/testCMVN/test_cmvn.py" lineno="75" time="0.00019884109497070312" sim_time_ns="10000.001000000164" ratio_time="50291419.89724783" />
+  </testsuite>
+</testsuites>

@@ -1,0 +1,21 @@
+{
+    "uuid": "0ab5d86d-9462-4377-9862-c105301c2766",
+    "/CMVN_gpt": {
+        "/CMVN_gpt+General": [
+            {
+                "role": "user",
+                "content": "HI, I'm trying to write a CMVN module for a KWS acclerator. the CMVN module applies Cepstral Mean and Variance Normalization (CMVN) to the input data. (x - mean) * istd. My calculation is in 32 fixed point data in 1.7.24 format. The module stores parameters cmvn_mean and cmvn_istd in the register file so it doesn't have to load from else where.  It interfaces with a input Buffer to get the input data tensor. ",
+                "date": "5/20/2024, 4:47:18 PM",
+                "delay": 0,
+                "doc_id": []
+            },
+            {
+                "role": "user",
+                "content": "hello?\n",
+                "date": "5/20/2024, 4:48:24 PM",
+                "delay": 0,
+                "doc_id": []
+            }
+        ]
+    }
+}

@@ -1,0 +1,107 @@
+Input Address: 0, Input Data: -15487858
+Output Address: 0000000000, Output Data (Fixed): 1005573584, Output Data (Float): 59.936856269836426
+
+Input: -15487858, Weight: 0, Multiplication Result: -33220560304734748
+Accumulation Result: 1005573584
+
+Input: -15487858, Weight: 0, Multiplication Result: -33220560304734748
+Accumulation Result: 0
+
+Input: -15487858, Weight: 2144942206, Multiplication Result: -33220560304734748
+Accumulation Result: 0
+
+Input: -15487858, Weight: 0, Multiplication Result: -33220560304734748
+Accumulation Result: 0
+
+Input: -15487858, Weight: 0, Multiplication Result: -33220560304734748
+Accumulation Result: -1882456604
+
+Input: -15487858, Weight: 2144942206, Multiplication Result: -33220560304734748
+Accumulation Result: -1882456604
+
+Input: -15487858, Weight: 0, Multiplication Result: -33220560304734748
+Accumulation Result: -1882456604
+
+Input: -15487858, Weight: 0, Multiplication Result: -33220560304734748
+Accumulation Result: 530054088
+
+Input: -15487858, Weight: 2144942206, Multiplication Result: -33220560304734748
+Accumulation Result: 530054088
+
+Input: -15487858, Weight: 0, Multiplication Result: -33220560304734748
+Accumulation Result: 530054088
+
+Input: -15487858, Weight: 0, Multiplication Result: -33220560304734748
+Accumulation Result: -1352402516
+
+Input: -15487858, Weight: 2144942206, Multiplication Result: -33220560304734748
+Accumulation Result: -1352402516
+
+Input: -15487858, Weight: 0, Multiplication Result: -33220560304734748
+Accumulation Result: -1352402516
+
+Input: -15487858, Weight: 0, Multiplication Result: -33220560304734748
+Accumulation Result: 1060108176
+
+Input: -15487858, Weight: 2144942206, Multiplication Result: -33220560304734748
+Accumulation Result: 1060108176
+
+Input: -15487858, Weight: 0, Multiplication Result: -33220560304734748
+Accumulation Result: 1060108176
+
+Input: -15487858, Weight: 0, Multiplication Result: -33220560304734748
+Accumulation Result: -822348428
+
+Input: -15487858, Weight: 2144942206, Multiplication Result: -33220560304734748
+Accumulation Result: -822348428
+
+Input: -15487858, Weight: 0, Multiplication Result: -33220560304734748
+Accumulation Result: -822348428
+
+Input: -15487858, Weight: 0, Multiplication Result: -33220560304734748
+Accumulation Result: 1590162264
+
+Input Address: 0, Input Data: -15487858
+Output Address: 0000000000, Output Data (Fixed): 1005573584, Output Data (Float): 59.936856269836426
+Input: -15487858, Weight: 0, Multiplication Result: -33220560304734748
+Accumulation Result: 1005573584
+Input: -15487858, Weight: 0, Multiplication Result: -33220560304734748
+Accumulation Result: 0
+Input: -15487858, Weight: 2144942206, Multiplication Result: -33220560304734748
+Accumulation Result: 0
+Input: -15487858, Weight: 0, Multiplication Result: -33220560304734748
+Accumulation Result: 0
+Input: -15487858, Weight: 0, Multiplication Result: -33220560304734748
+Accumulation Result: -1882456604
+Input: -15487858, Weight: 2144942206, Multiplication Result: -33220560304734748
+Accumulation Result: -1882456604
+Input: -15487858, Weight: 0, Multiplication Result: -33220560304734748
+Accumulation Result: -1882456604
+Input: -15487858, Weight: 0, Multiplication Result: -33220560304734748
+Accumulation Result: 530054088
+Input: -15487858, Weight: 2144942206, Multiplication Result: -33220560304734748
+Accumulation Result: 530054088
+Input: -15487858, Weight: 0, Multiplication Result: -33220560304734748
+Accumulation Result: 530054088
+Input: -15487858, Weight: 0, Multiplication Result: -33220560304734748
+Accumulation Result: -1352402516
+Input: -15487858, Weight: 2144942206, Multiplication Result: -33220560304734748
+Accumulation Result: -1352402516
+Input: -15487858, Weight: 0, Multiplication Result: -33220560304734748
+Accumulation Result: -1352402516
+Input: -15487858, Weight: 0, Multiplication Result: -33220560304734748
+Accumulation Result: 1060108176
+Input: -15487858, Weight: 2144942206, Multiplication Result: -33220560304734748
+Accumulation Result: 1060108176
+Input: -15487858, Weight: 0, Multiplication Result: -33220560304734748
+Accumulation Result: 1060108176
+Input: -15487858, Weight: 0, Multiplication Result: -33220560304734748
+Accumulation Result: -822348428
+Input: -15487858, Weight: 2144942206, Multiplication Result: -33220560304734748
+Accumulation Result: -822348428
+Input: -15487858, Weight: 0, Multiplication Result: -33220560304734748
+Accumulation Result: -822348428
+Input: -15487858, Weight: 0, Multiplication Result: -33220560304734748
+Accumulation Result: 1590162264
+Input Address: 1, Input Data: -15222356
+Output Address: 0000000001, Output Data (Fixed): 3057737612, Output Data (Float): -73.7446358203888
